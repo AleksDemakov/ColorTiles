@@ -36,21 +36,29 @@ public class TilesView extends View {
     public TilesView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
+        Toast.makeText(context, "Make all tiles gray", Toast.LENGTH_SHORT).show();
     }
 
-    public void setSize(int rows, int columns, boolean checkHints){
+    public void setSize(int rows, int columns, boolean checkHints) {
         tiles =  new boolean[rows+1][columns+1];
         n = rows;
         m = columns;
-        int cnt=0;
-        for(int i=0;i<n;i++)
-            for(int j=0;j<m;j++){
-                if(cnt >= n*m/2+1)break;
-                if(Math.random() < 0.5) {
-                    click(i, j);
-                    cnt++;
+        Random r = new Random();
+        int cnt=1, rsi = r.nextInt(n), rsj = r.nextInt(m);
+        click(rsi, rsj);
+        if(rows * columns >= 4) {
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < m; j++) {
+                    if (rsi == i && rsj == j)
+                        continue;
+                    if (cnt >= n * m / 2 + 1)
+                        break;
+                    if (Math.random() < 0.5) {
+                        click(i, j);
+                        cnt++;
+                    }
                 }
-            }
+        }
         isHint = false;
         this.checkHints = checkHints;
         if(checkHints)
@@ -159,6 +167,7 @@ public class TilesView extends View {
                 System.out.println("hint!");
                 isHint = false;
                 invalidate();
+                runCountdown();
             }
         }.start();
     }
